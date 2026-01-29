@@ -12,3 +12,91 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model TutorProfiles {
+  id      String   @id @default(uuid())
+  bio     String?
+  subject String[]
+  price   Float
+  rating  Float    @default(0)
+
+  authorId String  //betterAuth
+  // user         User                @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  availability TutorAvailability[]
+  categories   TutorCategory[]
+  bookings     Bookings[]
+  reviews      Reviews[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TutorAvailability {
+  id String @id @default(uuid())
+
+  tutorProfileId String
+  tutorProfile   TutorProfiles @relation(fields: [tutorProfileId], references: [id], onDelete: Cascade)
+
+  day       Day
+  startTime DateTime
+  endTime   DateTime
+
+  @@index([tutorProfileId, day])
+}
+enum Day {
+  SAT
+  SUN
+  MON
+  TUE
+  WED
+  THU
+  FRI
+}
+model Category {
+  id          String @id @default(uuid())
+  name        String @unique
+  description String
+
+  tutors TutorCategory[]
+}
+
+model Bookings {
+  id        String        @id @default(uuid())
+  studentId String
+  tutorId   String
+  tutor     TutorProfiles @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  date      DateTime
+  time      String
+  status    BookingStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+}
+
+model TutorCategory {
+  id String @id @default(uuid())
+
+  tutorId    String
+  categoryId String
+
+  tutor    TutorProfiles @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  category Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([tutorId, categoryId])
+}
+
+
+
+model Reviews {
+  id        String        @id @default(uuid())
+  studentId String
+  tutorId   String
+  tutor     TutorProfiles @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  rating    Float         @default(0)
+  comment   String        @db.Text
+  createdAt DateTime      @default(now())
+}
