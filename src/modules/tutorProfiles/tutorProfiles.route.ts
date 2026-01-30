@@ -3,5 +3,5 @@ import { tutorProfileController } from "./tutorProfiles.controller"
 
 const router =express.Router()
 
-router.post("/",tutorProfileController.createdTutorProfile)
+router.post("/profile",tutorProfileController.createdTutorProfile)
 export const tutorProfileRouter=router

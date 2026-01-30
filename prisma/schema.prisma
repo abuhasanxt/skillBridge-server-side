@@ -20,8 +20,8 @@ model TutorProfiles {
   price   Float
   rating  Float    @default(0)
 
-  authorId String  //betterAuth
-  // user         User                @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String @unique //betterAuth
+  // user     User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   availability TutorAvailability[]
   categories   TutorCategory[]
@@ -44,6 +44,7 @@ model TutorAvailability {
 
   @@index([tutorProfileId, day])
 }
+
 enum Day {
   SAT
   SUN
@@ -53,6 +54,7 @@ enum Day {
   THU
   FRI
 }
+
 model Category {
   id          String @id @default(uuid())
   name        String @unique
@@ -89,8 +91,6 @@ model TutorCategory {
   @@unique([tutorId, categoryId])
 }
 
-
-
 model Reviews {
   id        String        @id @default(uuid())
   studentId String
@@ -99,4 +99,68 @@ model Reviews {
   rating    Float         @default(0)
   comment   String        @db.Text
   createdAt DateTime      @default(now())
+}
+
+model User {
+  id            String         @id
+  name          String
+  email         String
+  emailVerified Boolean        @default(false)
+  image         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+  // tutorProfile  TutorProfiles?
+
+  @@unique([email])
+  @@map("student")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
 }
