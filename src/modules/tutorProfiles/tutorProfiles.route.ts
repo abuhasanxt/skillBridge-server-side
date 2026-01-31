@@ -5,8 +5,10 @@ import auth, { UserRole } from "../../middleware/auth";
 const router = express.Router();
 
 router.post(
-  "/profile",
+  "/api/tutor/profile",
   auth(UserRole.TUTOR),
   tutorProfileController.createdTutorProfile,
 );
+
+router.get("/tutors",tutorProfileController.getAllTutors)
 export const tutorProfileRouter = router;

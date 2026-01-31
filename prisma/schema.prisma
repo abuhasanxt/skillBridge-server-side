@@ -20,8 +20,8 @@ model TutorProfiles {
   price   Float
   rating  Float    @default(0)
 
-  authorId String  //betterAuth
-  // user     User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String @unique //betterAuth
+  user     User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   availability TutorAvailability[]
   categories   TutorCategory[]
@@ -111,7 +111,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
-  // tutorProfile  TutorProfiles?
+  tutorProfile  TutorProfiles[]
 
   role  String? @default("STUDENT")
   phone String?

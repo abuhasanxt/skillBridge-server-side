@@ -12,6 +12,12 @@ const createdTutorProfile=async(data:Omit<TutorProfiles,"id"|"createdAt"|"update
     return result
 }
 
+const getAllTutors=async()=>{
+    const result=await prisma.tutorProfiles.findMany()
+    return result
+}
+
 export const tutorProfileServices={
-    createdTutorProfile
+    createdTutorProfile,
+    getAllTutors
 }
