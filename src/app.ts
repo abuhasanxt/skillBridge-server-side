@@ -12,7 +12,7 @@ app.use(cors({
 app.all('/api/auth/*splat', toNodeHandler(auth));
 app.use(express.json())
 
-app.use("/tutor",tutorProfileRouter)
+app.use("/api/tutor",tutorProfileRouter)
 app.get("/",(req:Request,res:Response)=>{
     res.send("Skill Bridge!")
 })

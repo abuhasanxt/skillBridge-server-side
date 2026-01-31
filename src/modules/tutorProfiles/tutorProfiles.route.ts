@@ -1,7 +1,12 @@
-import express, { Request, Response } from "express"
-import { tutorProfileController } from "./tutorProfiles.controller"
+import express from "express";
+import { tutorProfileController } from "./tutorProfiles.controller";
+import auth, { UserRole } from "../../middleware/auth";
 
-const router =express.Router()
+const router = express.Router();
 
-router.post("/profile",tutorProfileController.createdTutorProfile)
-export const tutorProfileRouter=router
+router.post(
+  "/profile",
+  auth(UserRole.TUTOR),
+  tutorProfileController.createdTutorProfile,
+);
+export const tutorProfileRouter = router;

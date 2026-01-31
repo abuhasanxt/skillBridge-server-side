@@ -20,7 +20,7 @@ model TutorProfiles {
   price   Float
   rating  Float    @default(0)
 
-  authorId String @unique //betterAuth
+  authorId String  //betterAuth
   // user     User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   availability TutorAvailability[]
