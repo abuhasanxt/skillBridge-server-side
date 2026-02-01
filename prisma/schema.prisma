@@ -94,24 +94,28 @@ model TutorCategory {
 model Reviews {
   id        String        @id @default(uuid())
   studentId String
+  user      User          @relation(fields: [studentId], references: [id], onDelete: Cascade)
   tutorId   String
   tutor     TutorProfiles @relation(fields: [tutorId], references: [id], onDelete: Cascade)
-  rating    Float         @default(0)
+  rating    Float         
   comment   String        @db.Text
   createdAt DateTime      @default(now())
+
+  @@unique([studentId, tutorId])
 }
 
 model User {
-  id            String    @id
+  id            String          @id
   name          String
   email         String
-  emailVerified Boolean   @default(false)
+  emailVerified Boolean         @default(false)
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
   sessions      Session[]
   accounts      Account[]
   tutorProfile  TutorProfiles[]
+  reviews       Reviews[]
 
   role  String? @default("STUDENT")
   phone String?

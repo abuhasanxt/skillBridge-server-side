@@ -4,6 +4,7 @@ import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
 import cors from "cors"
 import { userRoutes } from "./modules/user/user.route";
+import { reviewRouter } from "./modules/reviews/review.route";
 
 
 const app =express()
@@ -16,6 +17,7 @@ app.use(express.json())
 
 app.use("/",tutorProfileRouter)
 app.use("/",userRoutes)
+app.use("/api",reviewRouter)
 app.get("/",(req:Request,res:Response)=>{
     res.send("Skill Bridge!")
 })
