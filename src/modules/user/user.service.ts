@@ -20,7 +20,22 @@ const getAllTutor = async () => {
   return result;
 };
 
+//get tutor details
+const getTutorDetails = async (id: string) => {
+  const result = await prisma.user.findFirst({
+    where: {
+        id:id,
+      role: UserRole.TUTOR,
+    },
+    include: {
+      tutorProfile: true,
+    },
+  });
+  return result;
+};
+
 export const userServices = {
   getAllStudent,
   getAllTutor,
+  getTutorDetails,
 };

@@ -18,25 +18,51 @@ const getAllStudent = async (req: Request, res: Response) => {
   }
 };
 
-
-const getAllTutor=async (req:Request,res:Response)=>{
-    try {
-        const result=await userServices.getAllTutor()
-         res.status(200).json({
+const getAllTutor = async (req: Request, res: Response) => {
+  try {
+    const result = await userServices.getAllTutor();
+    res.status(200).json({
       success: true,
       message: "Tutor retrieved successfully!",
       data: result,
     });
-    } catch (error) {
-         res.status(404).json({
+  } catch (error) {
+    res.status(404).json({
       success: false,
       message: "Tutor retrieved fail!",
       details: error,
     });
+  }
+};
+
+const getTutorDetails = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const result = await userServices.getTutorDetails(id as string);
+
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: "Tutor not found!",
+      });
     }
-}
+
+    res.status(200).json({
+      success: true,
+      message: "Tutor get successfully!",
+      data: result,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Tutor get fail!",
+    });
+  }
+};
 
 export const userController = {
   getAllStudent,
-  getAllTutor
+  getAllTutor,
+  getTutorDetails,
 };

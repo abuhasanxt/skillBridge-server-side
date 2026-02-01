@@ -5,5 +5,6 @@ import { userController } from "./user.controller";
 const router = express.Router();
 
 router.get("/students", auth(UserRole.STUDENT), userController.getAllStudent);
-router.get("/tutors",auth(), userController.getAllTutor);
+router.get("/tutors", userController.getAllTutor);
+router.get("/tutors/:id",userController.getTutorDetails)
 export const userRoutes = router;
