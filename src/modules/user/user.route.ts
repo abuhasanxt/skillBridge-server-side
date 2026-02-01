@@ -6,5 +6,5 @@ const router = express.Router();
 
 
 
-router.get("/users",auth(), userController.getAllUser)
+router.get("/users",auth(), userController.getAllStudent)
 export const userRoutes = router;
