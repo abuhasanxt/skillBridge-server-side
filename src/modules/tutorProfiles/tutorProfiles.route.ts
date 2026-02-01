@@ -10,5 +10,5 @@ router.post(
   tutorProfileController.createdTutorProfile,
 );
 
-router.get("/tutors",tutorProfileController.getAllTutors)
+router.get("/tutor/profile",tutorProfileController.getAllTutors)
 export const tutorProfileRouter = router;

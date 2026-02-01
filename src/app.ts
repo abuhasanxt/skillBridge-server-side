@@ -3,7 +3,8 @@ import { tutorProfileRouter } from "./modules/tutorProfiles/tutorProfiles.route"
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
 import cors from "cors"
-import { userController } from "./modules/user/user.controller";
+import { userRoutes } from "./modules/user/user.route";
+
 
 const app =express()
 app.use(cors({
@@ -14,7 +15,7 @@ app.all('/api/auth/*splat', toNodeHandler(auth));
 app.use(express.json())
 
 app.use("/",tutorProfileRouter)
-app.use("/",userController.getAllStudent)
+app.use("/",userRoutes)
 app.get("/",(req:Request,res:Response)=>{
     res.send("Skill Bridge!")
 })
