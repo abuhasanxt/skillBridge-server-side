@@ -28,7 +28,11 @@ const getTutorDetails = async (id: string) => {
       role: UserRole.TUTOR,
     },
     include: {
-      tutorProfile: true,
+      tutorProfile: {
+        include:{
+          reviews:true
+        }
+      }
     },
   });
   return result;
