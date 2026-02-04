@@ -61,8 +61,38 @@ const getTutorDetails = async (req: Request, res: Response) => {
   }
 };
 
+const updateUserProfile = async (req: Request, res: Response) => {
+  try {
+const userId=req.user?.id
+
+if (!userId) {
+   return res.status(401).json({
+        success: false,
+        message: "unauthorized",
+      });
+}
+
+    const result=await userServices.updateUserProfile(
+      userId!,
+      req.body
+    )
+    res.status(200).json({
+      success: true,
+      message: " Profile updated successfully!",
+      user:result
+    });
+  } catch (error:any) {
+    res.status(500).json({
+      success: false,
+      message: " Profile update failed!",
+      error:error.message,
+      details:error
+    });
+  }
+};
 export const userController = {
   getAllStudent,
   getAllTutor,
   getTutorDetails,
+  updateUserProfile
 };

@@ -24,22 +24,29 @@ const getAllTutor = async () => {
 const getTutorDetails = async (id: string) => {
   const result = await prisma.user.findFirst({
     where: {
-        id:id,
+      id: id,
       role: UserRole.TUTOR,
     },
     include: {
       tutorProfile: {
-        include:{
-          reviews:true
-        }
-      }
+        include: {
+          reviews: true,
+        },
+      },
     },
   });
   return result;
 };
 
+const updateUserProfile = async (id: string, payload: any) => {
+  return await prisma.user.update({
+    where: { id },
+    data: payload
+  });
+};
 export const userServices = {
   getAllStudent,
   getAllTutor,
   getTutorDetails,
+  updateUserProfile,
 };
