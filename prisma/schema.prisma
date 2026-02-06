@@ -20,7 +20,7 @@ model TutorProfiles {
   price   Float
   rating  Float    @default(0)
 
-  authorId String //betterAuth
+  authorId String @unique //betterAuth
   user     User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   availability TutorAvailability[]
@@ -79,7 +79,7 @@ model Bookings {
   id        String        @id @default(uuid())
   studentId String
   student   User          @relation(fields: [studentId], references: [id])
-  tutorId   String
+  tutorId   String        @unique
   tutor     TutorProfiles @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   date      DateTime
   time      String
