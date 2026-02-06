@@ -7,6 +7,7 @@ const router = express.Router();
 router.get("/students", auth(UserRole.STUDENT), userController.getAllStudent);
 router.get("/tutors", userController.getAllTutor);
 router.get("/tutors/:id", userController.getTutorDetails);
-router.put("/me", auth(), userController.updateUserProfile);
+router.put("/me", auth(), userController.updateOwnProfile);
+router.get("/me",auth(),userController.getOwnProfile)
 
 export const userRoutes = router;

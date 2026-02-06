@@ -37,16 +37,40 @@ const getTutorDetails = async (id: string) => {
   });
   return result;
 };
+const getOwnProfile=async(userId:string)=>{
+  const result =await prisma.user.findUnique({
+    where:{
+      id:userId
+    }
+  })
+  return result
+}
 
-const updateUserProfile = async (id: string, payload: any) => {
-  return await prisma.user.update({
+
+//update own profile
+type UpdateUserPayload = {
+  name: string;
+  image: string;
+  phone: string;
+};
+
+const updateOwnProfile = async (id: string, payload: UpdateUserPayload) => {
+  const allowedData: UpdateUserPayload = {
+    name: payload.name,
+    image: payload.image,
+    phone: payload.phone,
+  };
+
+  return prisma.user.update({
     where: { id },
-    data: payload
+    data: allowedData,
   });
 };
+
 export const userServices = {
   getAllStudent,
   getAllTutor,
   getTutorDetails,
-  updateUserProfile,
+  updateOwnProfile,
+  getOwnProfile
 };

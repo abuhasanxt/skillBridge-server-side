@@ -17,7 +17,7 @@ app.all('/api/auth/*splat', toNodeHandler(auth));
 app.use(express.json())
 
 app.use("/",tutorProfileRouter)
-app.use("/",userRoutes)
+app.use("/api",userRoutes)
 app.use("/api",reviewRouter)
 app.use("/api",bookingRouter)
 app.get("/",(req:Request,res:Response)=>{

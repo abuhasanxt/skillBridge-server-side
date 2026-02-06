@@ -61,7 +61,34 @@ const getTutorDetails = async (req: Request, res: Response) => {
   }
 };
 
-const updateUserProfile = async (req: Request, res: Response) => {
+const getOwnProfile=async(req:Request,res:Response)=>{
+  try {
+    const userId=req.user?.id
+
+if (!userId) {
+   return res.status(401).json({
+        success: false,
+        message: "unauthorized",
+      });
+}
+    const result=await userServices.getOwnProfile(userId)
+    res.status(200).json({
+      success: true,
+      message: " Profile retrieved successfully!",
+      user:result
+    });
+  } catch (error:any) {
+    res.status(500).json({
+      success: false,
+      message: " Profile getting failed!",
+      error:error.message,
+      details:error
+    });
+  }
+}
+
+//update own profile
+const updateOwnProfile = async (req: Request, res: Response) => {
   try {
 const userId=req.user?.id
 
@@ -72,7 +99,7 @@ if (!userId) {
       });
 }
 
-    const result=await userServices.updateUserProfile(
+    const result=await userServices.updateOwnProfile(
       userId!,
       req.body
     )
@@ -94,5 +121,6 @@ export const userController = {
   getAllStudent,
   getAllTutor,
   getTutorDetails,
-  updateUserProfile
+  updateOwnProfile,
+  getOwnProfile
 };
