@@ -13,7 +13,6 @@ const createReview = async (studentId: string, data: CreateReviewInput) => {
 
   if (!tutorExists) throw new Error("Tutor not found");
 
- 
   const alreadyReviewed = await prisma.reviews.findUnique({
     where: {
       studentId_tutorId: {
@@ -25,7 +24,6 @@ const createReview = async (studentId: string, data: CreateReviewInput) => {
 
   if (alreadyReviewed) throw new Error("You already reviewed this tutor");
 
-
   const review = await prisma.reviews.create({
     data: {
       studentId,
@@ -34,7 +32,6 @@ const createReview = async (studentId: string, data: CreateReviewInput) => {
       comment: data.comment,
     },
   });
-
 
   const reviews = await prisma.reviews.findMany({
     where: { tutorId: data.tutorId },
@@ -52,6 +49,26 @@ const createReview = async (studentId: string, data: CreateReviewInput) => {
   return review;
 };
 
+const getMyReviews = async (userId: string) => {
+  const tutorProfile = await prisma.tutorProfiles.findUnique({
+    where: { authorId: userId },
+  });
+  if (!tutorProfile) throw new Error("Tutor profile not found");
+
+  const reviews = await prisma.reviews.findMany({
+    where: { tutorId: tutorProfile.id },
+    include: {
+      user: { select: {  name: true, email: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+ 
+
+  return reviews 
+};
+
 export const reviewServices = {
   createReview,
+  getMyReviews,
 };

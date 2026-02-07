@@ -19,10 +19,11 @@ const createdTutorProfile = async (req: Request, res: Response) => {
       message: "tutorProfile created successfully !",
       data: result,
     });
-  } catch (error) {
+  } catch (error:any) {
     res.status(400).json({
       success: false,
       message: "post creation fail",
+      error:error.message,
       details: error,
     });
   }
