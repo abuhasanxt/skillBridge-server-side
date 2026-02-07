@@ -6,6 +6,7 @@ import cors from "cors"
 import { userRoutes } from "./modules/user/user.route";
 import { reviewRouter } from "./modules/reviews/review.route";
 import { bookingRouter } from "./modules/bookings/booking.route";
+import { availabilityRouter } from "./modules/availability/availability.route";
 
 
 const app =express()
@@ -20,6 +21,7 @@ app.use("/",tutorProfileRouter)
 app.use("/api",userRoutes)
 app.use("/api",reviewRouter)
 app.use("/api",bookingRouter)
+app.use("/",availabilityRouter)
 app.get("/",(req:Request,res:Response)=>{
     res.send("Skill Bridge!")
 })
