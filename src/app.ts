@@ -11,7 +11,7 @@ import { availabilityRouter } from "./modules/availability/availability.route";
 
 const app =express()
 app.use(cors({
-    origin:process.env.APP_URL,
+    origin:process.env.APP_URL, //client side url
     credentials:true
 }))
 app.all('/api/auth/*splat', toNodeHandler(auth));

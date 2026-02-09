@@ -19,27 +19,30 @@ const createdTutorProfile = async (req: Request, res: Response) => {
       message: "tutorProfile created successfully !",
       data: result,
     });
-  } catch (error:any) {
+  } catch (error: any) {
     res.status(400).json({
       success: false,
       message: "post creation fail",
-      error:error.message,
+      error: error.message,
       details: error,
     });
   }
 };
 
-const getAllTutors = async (req:Request,res:Response) => {
+const getAllTutors = async (req: Request, res: Response) => {
   try {
-    const result = await tutorProfileServices.getAllTutors();
-     res.status(200).json({
+    const { search } = req.query;
+    const searchString = typeof search === "string" ? search : undefined;
+    const result = await tutorProfileServices.getAllTutors({
+      search: searchString,
+    });
+    res.status(200).json({
       success: true,
       message: "Tutor retrieved successfully !",
       data: result,
     });
-
   } catch (error) {
-    res.status(404).json({
+    res.status(500).json({
       success: false,
       message: "Tutor retrieved fail",
       details: error,
