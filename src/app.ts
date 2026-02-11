@@ -7,6 +7,7 @@ import { userRoutes } from "./modules/user/user.route";
 import { reviewRouter } from "./modules/reviews/review.route";
 import { bookingRouter } from "./modules/bookings/booking.route";
 import { availabilityRouter } from "./modules/availability/availability.route";
+import { categoryRouter } from "./modules/category/category.route";
 
 
 const app =express()
@@ -22,6 +23,7 @@ app.use("/api",userRoutes)
 app.use("/api",reviewRouter)
 app.use("/api",bookingRouter)
 app.use("/",availabilityRouter)
+app.use("/",categoryRouter)
 app.get("/",(req:Request,res:Response)=>{
     res.send("Skill Bridge!")
 })
