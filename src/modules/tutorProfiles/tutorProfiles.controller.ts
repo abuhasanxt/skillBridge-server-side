@@ -1,33 +1,40 @@
 import { Request, Response } from "express";
 import { tutorProfileServices } from "./tutorProfiles.service";
 
+
 const createdTutorProfile = async (req: Request, res: Response) => {
   try {
-    const user = req.user;
-    if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: "Unauthorized!",
-      });
-    }
-    const result = await tutorProfileServices.createdTutorProfile(
-      req.body,
-      user.id as string,
-    );
+    const userId = req.user?.id;
+    if (!userId)
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+
+    const result = await tutorProfileServices.createdTutorProfile({
+      ...req.body,
+      categoryIds: req.body.categoryIds, 
+    }, userId);
+
     res.status(201).json({
       success: true,
-      message: "tutorProfile created successfully !",
+      message: "Tutor profile created successfully",
       data: result,
     });
   } catch (error: any) {
     res.status(400).json({
       success: false,
-      message: "post creation fail",
+      message: "Tutor profile creation failed",
       error: error.message,
-      details: error,
     });
   }
 };
+
+
+
+
+
+
+
+
+
 
 const getAllTutors = async (req: Request, res: Response) => {
   try {

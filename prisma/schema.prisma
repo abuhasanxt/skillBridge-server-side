@@ -24,7 +24,7 @@ model TutorProfiles {
   user     User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   availability TutorAvailability[]
-  categories   TutorCategory[]
+  categories   Category[]
   bookings     Bookings[]
   reviews      Reviews[]
 
@@ -56,23 +56,11 @@ enum Day {
 }
 
 model Category {
-  id          String @id @default(uuid())
-  name        String @unique
+  id          String        @id @default(uuid())
+  name        String        @unique
   description String
-
-  tutors TutorCategory[]
-}
-
-model TutorCategory {
-  id String @id @default(uuid())
-
-  tutorId    String
-  categoryId String
-
-  tutor    TutorProfiles @relation(fields: [tutorId], references: [id], onDelete: Cascade)
-  category Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-
-  @@unique([tutorId, categoryId])
+    tutors      TutorProfiles[]
+  
 }
 
 model Bookings {
@@ -119,12 +107,12 @@ model User {
   tutorProfile  TutorProfiles[]
   reviews       Reviews[]
   bookings      Bookings[]
-
-  role  String  @default("STUDENT")
-  phone String?
+  isBanned  Boolean  @default(false)
+  role          String          @default("STUDENT")
+  phone         String?
 
   @@unique([email])
-  @@map("student")
+ 
 }
 
 model Session {

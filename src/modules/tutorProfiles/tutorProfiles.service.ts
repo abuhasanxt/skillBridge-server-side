@@ -1,24 +1,36 @@
 import { TutorProfiles } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
+type TutorProfilePayload = Omit<
+  TutorProfiles,
+  "id" | "authorId" | "createdAt" | "updatedAt"
+> & { categoryIds: string[] }; // Tutor can select multiple categories
 const createdTutorProfile = async (
-  data: Omit<TutorProfiles, "id" | "createdAt" | "updatedAt" | "authorId">,
+  data: TutorProfilePayload,
   userId: string,
 ) => {
+  // Check if tutor already has profile
   const existingProfile = await prisma.tutorProfiles.findUnique({
     where: { authorId: userId },
   });
 
-  if (existingProfile) {
-    throw new Error("You already have a tutor profile");
-  }
-  const result = await prisma.tutorProfiles.create({
+  if (existingProfile) throw new Error("You already have a tutor profile");
+
+  return prisma.tutorProfiles.create({
     data: {
-      ...data,
+      bio: data.bio,
+      subject: data.subject,
+      price: data.price,
+      rating: data.rating,
       authorId: userId,
+      categories: {
+        connect: data.categoryIds.map((id) => ({ id })), // connect to existing categories
+      },
+    },
+    include: {
+      categories: true, // return categories with profile
     },
   });
-  return result;
 };
 
 const getAllTutors = async (payload: { search?: string | undefined }) => {

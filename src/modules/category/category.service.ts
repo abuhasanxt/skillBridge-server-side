@@ -1,6 +1,5 @@
 import { prisma } from "../../lib/prisma";
 type Payload = {
-  id: string;
   name: string;
   description: string;
 };
