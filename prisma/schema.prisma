@@ -24,7 +24,7 @@ model TutorProfiles {
   user     User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   availability TutorAvailability[]
-  categories   Category[]
+  categories   TutorCategory[]
   bookings     Bookings[]
   reviews      Reviews[]
 
@@ -32,6 +32,24 @@ model TutorProfiles {
   updatedAt DateTime @updatedAt
 }
 
+model Category {
+  id          String        @id @default(uuid())
+  name        String        @unique
+  description String
+    tutors      TutorCategory[]
+  
+}
+
+model TutorCategory {
+  id         String        @id @default(uuid())
+  tutorId    String
+  categoryId String
+
+  tutor      TutorProfiles @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  category   Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([tutorId, categoryId])
+}
 model TutorAvailability {
   id String @id @default(uuid())
 
@@ -55,13 +73,7 @@ enum Day {
   FRI
 }
 
-model Category {
-  id          String        @id @default(uuid())
-  name        String        @unique
-  description String
-    tutors      TutorProfiles[]
-  
-}
+
 
 model Bookings {
   id        String        @id @default(uuid())

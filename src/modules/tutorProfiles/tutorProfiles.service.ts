@@ -27,6 +27,69 @@ const createdTutorProfile = async (
   });
 };
 
+export const assignCategoriesToTutor = async (
+  tutorId: string,
+  categoryIds: string[],
+) => {
+  // Fetch tutor profile
+  const tutor = await prisma.tutorProfiles.findUnique({
+    where: { authorId: tutorId },
+  });
+
+  if (!tutor) throw new Error("Tutor profile not found");
+
+  // Assign categories (skip duplicates)
+  await prisma.tutorCategory.createMany({
+    data: categoryIds.map((categoryId) => ({
+      tutorId: tutor.id,
+      categoryId,
+    })),
+    skipDuplicates: true,
+  });
+
+  // Return updated categories
+  const updatedCategories = await prisma.tutorCategory.findMany({
+    where: { tutorId: tutor.id },
+    include: { category: true },
+  });
+
+  return updatedCategories;
+};
+
+
+// type RemoveCategoryPayload = {
+//   categoryIds: string[]; // এক বা একাধিক category remove করতে পারবে
+// };
+
+// export const removeCategoriesFromTutor = async (
+//   tutorId: string,
+//   payload: RemoveCategoryPayload
+// ) => {
+//   const tutor = await prisma.tutorProfiles.findUnique({
+//     where: { id: tutorId },
+//   });
+
+//   if (!tutor) throw new Error("Tutor profile not found");
+
+//   const result = await prisma.tutorProfiles.update({
+//     where: { id: tutorId },
+//     data: {
+//       categories: {
+//         disconnect: payload.categoryIds.map((id) => ({ categoryId: id })),
+//       },
+//     },
+//     include: {
+//       categories: {
+//         include: {
+//           category: true,
+//         },
+//       },
+//     },
+//   });
+
+//   return result;
+// };
+
 const getAllTutors = async (payload: { search?: string | undefined }) => {
   const search = payload.search?.trim();
 
@@ -81,4 +144,5 @@ const getAllTutors = async (payload: { search?: string | undefined }) => {
 export const tutorProfileServices = {
   createdTutorProfile,
   getAllTutors,
+  assignCategoriesToTutor,
 };

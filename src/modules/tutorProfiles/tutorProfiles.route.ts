@@ -9,6 +9,11 @@ router.post(
   auth(UserRole.TUTOR),
   tutorProfileController.createdTutorProfile,
 );
+router.post(
+  "/tutor/categories",
+  auth(UserRole.TUTOR),
+  tutorProfileController.assignCategory,
+);
 
 router.get("/tutor/profile",tutorProfileController.getAllTutors)
 export const tutorProfileRouter = router;
