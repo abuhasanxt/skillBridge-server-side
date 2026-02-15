@@ -4,7 +4,7 @@ import { prisma } from "../../lib/prisma";
 type TutorProfilePayload = Omit<
   TutorProfiles,
   "id" | "authorId" | "createdAt" | "updatedAt"
-> & { categoryIds: string[] }; // Tutor can select multiple categories
+>;
 const createdTutorProfile = async (
   data: TutorProfilePayload,
   userId: string,
@@ -23,12 +23,6 @@ const createdTutorProfile = async (
       price: data.price,
       rating: data.rating,
       authorId: userId,
-      categories: {
-        connect: data.categoryIds.map((id) => ({ id })), // connect to existing categories
-      },
-    },
-    include: {
-      categories: true, // return categories with profile
     },
   });
 };

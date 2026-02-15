@@ -10,7 +10,7 @@ const createdTutorProfile = async (req: Request, res: Response) => {
 
     const result = await tutorProfileServices.createdTutorProfile({
       ...req.body,
-      categoryIds: req.body.categoryIds, 
+      
     }, userId);
 
     res.status(201).json({
