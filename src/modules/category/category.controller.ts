@@ -26,6 +26,25 @@ const createdCategory = async (req: Request, res: Response) => {
   }
 };
 
+
+const getAllCategory=async(req:Request,res:Response)=>{
+  try {
+    const result=await categoryServices.getAllCategory()
+    res.status(200).json({
+      success: true,
+      message: "Category retrieved successfully",
+      data: result,
+    });
+  } catch (error:any) {
+     res.status(404).json({
+      success: false,
+      message: "Category retrieved failed!",
+      error: error.message,
+      details: error,
+    });
+  }
+}
 export const categoryController = {
   createdCategory,
+  getAllCategory
 };
