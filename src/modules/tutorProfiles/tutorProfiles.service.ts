@@ -42,16 +42,33 @@ const assignCategoriesToTutor = async (
 
   if (!tutor) throw new Error("Tutor profile not found");
 
+ // 3️⃣ Check if all categoryIds exist in DB
+  const existingCategories = await prisma.category.findMany({
+    where: {
+      id: { in: categoryIds },
+    },
+    select: { id: true },
+  });
+  const existingCategoryIds = existingCategories.map(c => c.id);
+
+  if (existingCategoryIds.length !== categoryIds.length) {
+    const invalidIds = categoryIds.filter(
+      id => !existingCategoryIds.includes(id)
+    );
+
+    throw new Error(`Invalid category IDs: ${invalidIds.join(", ")}`);
+  }
+
     //  Check already assigned categories
-  const existingRelations = await prisma.tutorCategory.findMany({
+  const  alreadyAssigned = await prisma.tutorCategory.findMany({
     where: {
       tutorId: tutor.id,
       categoryId: { in: categoryIds },
     },
   });
 
-  if (existingRelations.length > 0) {
-    const alreadyAssignedIds = existingRelations.map(r => r.categoryId);
+  if ( alreadyAssigned.length > 0) {
+    const alreadyAssignedIds =  alreadyAssigned.map(r => r.categoryId);
     throw new Error(
       `These categories are already assigned: ${alreadyAssignedIds.join(", ")}`
     );
