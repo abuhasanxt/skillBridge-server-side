@@ -3,6 +3,7 @@ import { categoryServices } from "./category.service";
 
 const createdCategory = async (req: Request, res: Response) => {
   try {
+    const userId=req.user?.id
     if (req.user?.role !== "ADMIN") {
       return res.status(403).json({
         success: false,
@@ -10,7 +11,7 @@ const createdCategory = async (req: Request, res: Response) => {
       });
     }
 
-    const result = await categoryServices.createdCategory(req.body);
+    const result = await categoryServices.createdCategory(req.body,userId as string);
     res.status(201).json({
       success: true,
       message: "Category created successfully",

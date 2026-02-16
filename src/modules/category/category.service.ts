@@ -3,7 +3,7 @@ type Payload = {
   name: string;
   description: string;
 };
-const createdCategory = async (data: Payload) => {
+const createdCategory = async (data: Payload,authorId:string) => {
   const existing = await prisma.category.findUnique({
     where: { name: data.name },
   });
@@ -14,6 +14,7 @@ const createdCategory = async (data: Payload) => {
 
   const result = await prisma.category.create({
     data: {
+      authorId,
       name: data.name,
       description: data.description,
     },

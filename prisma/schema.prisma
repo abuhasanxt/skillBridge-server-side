@@ -37,6 +37,8 @@ model Category {
   name        String        @unique
   description String
     tutors      TutorCategory[]
+     authorId String
+    user     User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
   
 }
 
@@ -117,6 +119,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   tutorProfile  TutorProfiles[]
+  categories Category[]
   reviews       Reviews[]
   bookings      Bookings[]
   isBanned  Boolean  @default(false)

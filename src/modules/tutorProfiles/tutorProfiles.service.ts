@@ -31,6 +31,10 @@ const assignCategoriesToTutor = async (
   tutorId: string,
   categoryIds: string[],
 ) => {
+
+  if (!categoryIds || !Array.isArray(categoryIds) || categoryIds.length === 0) {
+    throw new Error("No categories provided");
+  }
   // Fetch tutor profile
   const tutor = await prisma.tutorProfiles.findUnique({
     where: { authorId: tutorId },
@@ -38,13 +42,27 @@ const assignCategoriesToTutor = async (
 
   if (!tutor) throw new Error("Tutor profile not found");
 
-  // Assign categories (skip duplicates)
+    //  Check already assigned categories
+  const existingRelations = await prisma.tutorCategory.findMany({
+    where: {
+      tutorId: tutor.id,
+      categoryId: { in: categoryIds },
+    },
+  });
+
+  if (existingRelations.length > 0) {
+    const alreadyAssignedIds = existingRelations.map(r => r.categoryId);
+    throw new Error(
+      `These categories are already assigned: ${alreadyAssignedIds.join(", ")}`
+    );
+  }
+  // Assign categories 
   await prisma.tutorCategory.createMany({
     data: categoryIds.map((categoryId) => ({
       tutorId: tutor.id,
       categoryId,
     })),
-    skipDuplicates: true,
+   
   });
 
   // Return updated categories
