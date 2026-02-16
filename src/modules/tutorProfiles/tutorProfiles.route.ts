@@ -4,6 +4,7 @@ import auth, { UserRole } from "../../middleware/auth";
 
 const router = express.Router();
 
+router.get("/tutor/profile", tutorProfileController.getAllTutors);
 router.post(
   "/api/tutor/profile",
   auth(UserRole.TUTOR),
@@ -15,5 +16,9 @@ router.post(
   tutorProfileController.assignCategory,
 );
 
-router.get("/tutor/profile",tutorProfileController.getAllTutors)
+router.delete(
+  "/tutor/categories",
+  auth(UserRole.TUTOR),
+  tutorProfileController.removeCategoriesTutor,
+);
 export const tutorProfileRouter = router;

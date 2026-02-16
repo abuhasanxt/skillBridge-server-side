@@ -28,17 +28,11 @@ const createdTutorProfile = async (req: Request, res: Response) => {
   }
 };
 
-
-
-
-
-
-
 // POST /tutor/assign-categories
 const assignCategory = async (req: Request, res: Response) => {
   try {
     const tutorId = req.user?.id;
-    const { categoryIds } = req.body || {}; 
+    const { categoryIds } = req.body || {};
 
     if (!tutorId) {
       return res.status(401).json({
@@ -47,14 +41,21 @@ const assignCategory = async (req: Request, res: Response) => {
       });
     }
 
-    if (!categoryIds || !Array.isArray(categoryIds) || categoryIds.length === 0) {
+    if (
+      !categoryIds ||
+      !Array.isArray(categoryIds) ||
+      categoryIds.length === 0
+    ) {
       return res.status(400).json({
         success: false,
         message: "No categories provided",
       });
     }
 
-    const result = await tutorProfileServices.assignCategoriesToTutor(tutorId, categoryIds);
+    const result = await tutorProfileServices.assignCategoriesToTutor(
+      tutorId,
+      categoryIds,
+    );
 
     res.status(200).json({
       success: true,
@@ -70,48 +71,31 @@ const assignCategory = async (req: Request, res: Response) => {
   }
 };
 
+const removeCategoriesTutor = async (req: Request, res: Response) => {
+  try {
+    const tutorId = req.user?.id;
+    const { categoryIds } = req.body;
+    if (!tutorId)
+      return res.status(401).json({ success: false, message: "Unauthorized" });
 
+    const result = await tutorProfileServices.removeCategoriesTutor(
+      tutorId,
+      categoryIds,
+    );
 
-
-
-
-// const removeCategoryController = async (req: Request, res: Response) => {
-//   try {
-//     const tutorId = req.user?.id;
-//     if (!tutorId)
-//       return res.status(401).json({ success: false, message: "Unauthorized" });
-
-//     const result = await tutorServices.removeCategoriesFromTutor(
-//       tutorId,
-//       req.body
-//     );
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Categories removed successfully",
-//       data: result,
-//     });
-//   } catch (error: any) {
-//     res.status(400).json({
-//       success: false,
-//       message: "Failed to remove categories",
-//       error: error.message,
-//     });
-//   }
-// };
-
-
-
-
-
-
-
-
-
-
-
-
-
+    res.status(200).json({
+      success: true,
+      message: "Categories removed successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      message: "Failed to remove categories",
+      error: error.message,
+    });
+  }
+};
 
 const getAllTutors = async (req: Request, res: Response) => {
   try {
@@ -136,5 +120,6 @@ const getAllTutors = async (req: Request, res: Response) => {
 export const tutorProfileController = {
   createdTutorProfile,
   getAllTutors,
-  assignCategory
+  assignCategory,
+  removeCategoriesTutor,
 };

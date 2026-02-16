@@ -27,7 +27,7 @@ const createdTutorProfile = async (
   });
 };
 
-export const assignCategoriesToTutor = async (
+const assignCategoriesToTutor = async (
   tutorId: string,
   categoryIds: string[],
 ) => {
@@ -56,39 +56,49 @@ export const assignCategoriesToTutor = async (
   return updatedCategories;
 };
 
+const removeCategoriesTutor = async (
+  tutorUserId: string,
+  categoryIds: string[],
+) => {
+  
+  if (!categoryIds || !Array.isArray(categoryIds) || categoryIds.length === 0) {
+    throw new Error("No categories Provided");
+  }
+  //find tutor profile
+  const tutor = await prisma.tutorProfiles.findUnique({
+    where: { authorId: tutorUserId },
+  });
 
-// type RemoveCategoryPayload = {
-//   categoryIds: string[]; // এক বা একাধিক category remove করতে পারবে
-// };
+  if (!tutor) {
+    throw new Error("Tutor profile not found");
+  }
 
-// export const removeCategoriesFromTutor = async (
-//   tutorId: string,
-//   payload: RemoveCategoryPayload
-// ) => {
-//   const tutor = await prisma.tutorProfiles.findUnique({
-//     where: { id: tutorId },
-//   });
+  //  Check which categories are actually assigned
+  const existingRelations = await prisma.tutorCategory.findMany({
+    where: {
+      tutorId: tutor.id,
+      categoryId: { in: categoryIds },
+    },
+  });
+ if (existingRelations.length === 0) {
+    throw new Error("These categories are not assigned to this tutor");
+  }
 
-//   if (!tutor) throw new Error("Tutor profile not found");
+ //  Remove only assigned ones
+  await prisma.tutorCategory.deleteMany({
+    where: {
+      tutorId: tutor.id,
+      categoryId: { in: existingRelations.map(r => r.categoryId) },
+    },
+  });
 
-//   const result = await prisma.tutorProfiles.update({
-//     where: { id: tutorId },
-//     data: {
-//       categories: {
-//         disconnect: payload.categoryIds.map((id) => ({ categoryId: id })),
-//       },
-//     },
-//     include: {
-//       categories: {
-//         include: {
-//           category: true,
-//         },
-//       },
-//     },
-//   });
-
-//   return result;
-// };
+ // Return updated categories
+  const updatedCategories = await prisma.tutorCategory.findMany({
+    where: { tutorId: tutor.id },
+    include: { category: true },
+  });
+  return updatedCategories;
+};
 
 const getAllTutors = async (payload: { search?: string | undefined }) => {
   const search = payload.search?.trim();
@@ -145,4 +155,5 @@ export const tutorProfileServices = {
   createdTutorProfile,
   getAllTutors,
   assignCategoriesToTutor,
+  removeCategoriesTutor,
 };
