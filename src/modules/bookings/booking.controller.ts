@@ -42,7 +42,7 @@ const getMyBookings = async (req: Request, res: Response) => {
     const result = await BookingServices.getMyBookings(user.id);
     res.status(201).json({
       success: true,
-      message: "Get booking retrieved successfully !",
+      message: "Get my booking retrieved successfully !",
       data: result,
     });
   } catch (error: any) {
@@ -54,7 +54,26 @@ const getMyBookings = async (req: Request, res: Response) => {
     });
   }
 };
+
+const getAllBookings=async (req:Request,res:Response)=>{
+ try {
+    const result = await BookingServices.getAllBookings();
+    res.status(201).json({
+      success: true,
+      message: "Get booking retrieved successfully !",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      message: "Get  booking retrieved failed!",
+      error: error.message,
+      details: error,
+    });
+  }
+}
 export const bookingController = {
   createdBooking,
   getMyBookings,
+  getAllBookings
 };
