@@ -1,5 +1,9 @@
 import { prisma } from "../../lib/prisma";
 import { UserRole } from "../../middleware/auth";
+//get all user 
+const getAllUser=async()=>{
+  return await prisma.user.findMany()
+}
 //get all Student
 const getAllStudent = async () => {
   const result = await prisma.user.findMany({
@@ -71,6 +75,7 @@ const updateOwnProfile = async (id: string, payload: UpdateUserPayload) => {
 };
 
 export const userServices = {
+  getAllUser,
   getAllStudent,
   getAllTutor,
   getTutorDetails,
