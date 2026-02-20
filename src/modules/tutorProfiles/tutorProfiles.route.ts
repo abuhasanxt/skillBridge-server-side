@@ -15,6 +15,7 @@ router.post(
   auth(UserRole.TUTOR),
   tutorProfileController.assignCategory,
 );
+router.put("/tutor/profile", auth(), tutorProfileController.updateTutorProfile);
 
 router.delete(
   "/tutor/categories",

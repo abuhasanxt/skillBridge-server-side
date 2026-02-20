@@ -204,9 +204,33 @@ const getAllTutors = async ({
   return result;
 };
 
+type UpdateTutorPayload = {
+  bio?: string;
+  subject?: string[];
+  price?: number;
+};
+const updateTutorProfile = async (
+  tutorId: string,
+  payload: UpdateTutorPayload,
+) => {
+  
+  const data: Partial<UpdateTutorPayload> = {};
+  if (payload.bio !== undefined) data.bio = payload.bio;
+  if (payload.subject !== undefined) data.subject = payload.subject;
+  if (payload.price !== undefined) data.price = payload.price;
+
+  const result = await prisma.tutorProfiles.update({
+    where: { authorId: tutorId },
+    data,
+  });
+
+  return result;
+};
+
 export const tutorProfileServices = {
   createdTutorProfile,
   getAllTutors,
   assignCategoriesToTutor,
   removeCategoriesTutor,
+  updateTutorProfile,
 };

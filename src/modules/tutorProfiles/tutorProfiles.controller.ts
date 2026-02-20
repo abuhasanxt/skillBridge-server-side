@@ -119,9 +119,37 @@ const getAllTutors = async (req: Request, res: Response) => {
     });
   }
 };
+
+const updateTutorProfile=async(req:Request,res:Response)=>{
+  try {
+    const tutorId=req.user?.id
+     if (!tutorId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+    const result=await tutorProfileServices.updateTutorProfile(
+      tutorId,
+      req.body)
+      res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      data: result,
+    });
+  } 
+   catch (error:any) {
+    res.status(400).json({
+      success: false,
+      message: "Failed to update profile",
+      error: error.message,
+    });
+  }
+}
 export const tutorProfileController = {
   createdTutorProfile,
   getAllTutors,
   assignCategory,
   removeCategoriesTutor,
+  updateTutorProfile
 };
