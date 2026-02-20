@@ -135,32 +135,55 @@ const removeCategoriesTutor = async (
 
 const getAllTutors = async ({
   search,
-  subject,
+  categories,
 }: {
-  search?: string |undefined;
-  subject: string[] | [];
+  search?: string | undefined;
+  categories: string[] | [];
 }) => {
-  const andCondition:TutorProfilesWhereInput []= [];
+  const andCondition: TutorProfilesWhereInput[] = [];
   if (search) {
+    const numericSearch = Number(search);
     andCondition.push({
       // subject search
-      subject: {
-        has: search,
-      },
+      OR: [
+        {
+          subject: {
+            has: search,
+          },
+        },
+        // ratting search
+
+        ...(isNaN(numericSearch)
+          ? []
+          : [
+              {
+                rating: numericSearch,
+              },
+            ]),
+        //price search
+
+        ...(isNaN(numericSearch)
+          ? []
+          : [
+              {
+                price: { gte: numericSearch },
+              },
+            ]),
+      ],
     });
   }
 
-  if (subject.length>0) {
-    andCondition.push({
-      //subject filtering
-          subject: {
-            hasEvery: subject as string[],
-          },
-        },)
-  }
+  // if (categories.length > 0) {
+  //   andCondition.push({
+  //     //categories filtering
+  //     categories: {
+  //       hasEvery: categories as string[],
+  //     },
+  //   });
+  // }
   const result = await prisma.tutorProfiles.findMany({
     where: {
-      AND:andCondition
+      AND: andCondition,
     },
     orderBy: {
       rating: "desc",

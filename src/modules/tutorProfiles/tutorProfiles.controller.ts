@@ -101,10 +101,10 @@ const getAllTutors = async (req: Request, res: Response) => {
   try {
     const { search } = req.query;
     const searchString = typeof search === "string" ? search : undefined;
-    const subject=req.query.subject? (req.query.subject as string).split(","):[]
+    const categories=req.query.categories? (req.query.categories as string).split(","):[]
     const result = await tutorProfileServices.getAllTutors({
       search: searchString,
-      subject
+      categories 
     });
     res.status(200).json({
       success: true,
