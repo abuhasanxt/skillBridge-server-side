@@ -173,17 +173,28 @@ const getAllTutors = async ({
     });
   }
 
-  // if (categories.length > 0) {
-  //   andCondition.push({
-  //     //categories filtering
-  //     categories: {
-  //       hasEvery: categories as string[],
-  //     },
-  //   });
-  // }
+  //categories filtering
+  if (categories.length > 0) {
+    andCondition.push({
+      categories: {
+        some: {
+          categoryId: {
+            in: categories,
+          },
+        },
+      },
+    });
+  }
   const result = await prisma.tutorProfiles.findMany({
     where: {
       AND: andCondition,
+    },
+    include: {
+      categories: {
+        select: {
+          category: true,
+        },
+      },
     },
     orderBy: {
       rating: "desc",

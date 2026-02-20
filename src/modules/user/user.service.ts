@@ -31,7 +31,9 @@ const getTutorDetails = async (id: string) => {
       tutorProfile: {
         include: {
           reviews: true,
-          categories:true
+          categories:{
+            select:{category:true}
+          }
         },
       },
     },
