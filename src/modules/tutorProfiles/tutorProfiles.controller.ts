@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { tutorProfileServices } from "./tutorProfiles.service";
 
-const createdTutorProfile = async (req: Request, res: Response) => {
+const createdTutorProfile = async (req: Request, res: Response,next:NextFunction) => {
   try {
     const userId = req.user?.id;
     if (!userId)
@@ -20,16 +20,12 @@ const createdTutorProfile = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      message: "Tutor profile creation failed",
-      error: error.message,
-    });
+    next(error)
   }
 };
 
 // POST /tutor/assign-categories
-const assignCategory = async (req: Request, res: Response) => {
+const assignCategory = async (req: Request, res: Response,next:NextFunction) => {
   try {
     const tutorId = req.user?.id;
     const { categoryIds } = req.body || {};
@@ -63,11 +59,7 @@ const assignCategory = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      message: "Failed to assign categories",
-      error: error.message,
-    });
+    next(error)
   }
 };
 

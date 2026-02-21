@@ -9,6 +9,7 @@ import { bookingRouter } from "./modules/bookings/booking.route";
 import { availabilityRouter } from "./modules/availability/availability.route";
 import { categoryRouter } from "./modules/category/category.route";
 import { notFound } from "./middleware/notFound";
+import errorHandler from "./middleware/globalErrorHandler";
 
 
 const app =express()
@@ -28,6 +29,6 @@ app.use("/",categoryRouter)
 app.get("/",(req:Request,res:Response)=>{
     res.send("Skill Bridge!")
 })
-
+app.use(errorHandler)
 app.use(notFound)
 export default app

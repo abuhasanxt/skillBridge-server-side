@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { BookingServices } from "./booking.service";
 
-const createdBooking = async (req: Request, res: Response) => {
+const createdBooking = async (req: Request, res: Response,next:NextFunction) => {
   try {
     const user = req.user;
     if (!user) {
@@ -20,16 +20,11 @@ const createdBooking = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      message: "booking failed!",
-      error: error.message,
-      details: error,
-    });
+    next(error)
   }
 };
 
-const getMyBookings = async (req: Request, res: Response) => {
+const getMyBookings = async (req: Request, res: Response,next:NextFunction) => {
   try {
     const user = req.user;
 
@@ -46,16 +41,11 @@ const getMyBookings = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      message: "Get my booking retrieved failed!",
-      error: error.message,
-      details: error,
-    });
+    next(error)
   }
 };
 
-const getAllBookings=async (req:Request,res:Response)=>{
+const getAllBookings=async (req:Request,res:Response,next:NextFunction)=>{
  try {
     const result = await BookingServices.getAllBookings();
     res.status(201).json({
@@ -64,12 +54,8 @@ const getAllBookings=async (req:Request,res:Response)=>{
       data: result,
     });
   } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      message: "Get  booking retrieved failed!",
-      error: error.message,
-      details: error,
-    });
+   
+    next(error)
   }
 }
 export const bookingController = {

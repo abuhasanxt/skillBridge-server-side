@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { reviewServices } from "./reviews.service";
 
-const createReview = async (req: Request, res: Response) => {
+const createReview = async (req: Request, res: Response,next:NextFunction) => {
   try {
     const studentId = req.user?.id as string; 
     if (!studentId) throw new Error("Unauthorized: studentId missing");
@@ -24,14 +24,11 @@ const createReview = async (req: Request, res: Response) => {
       data: review,
     });
   } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    next(error)
   }
 };
 
-const getMyReviews=async(req:Request,res:Response)=>{
+const getMyReviews=async(req:Request,res:Response,next:NextFunction)=>{
   try {
     const userId = req.user?.id;
     if (!userId)
@@ -45,11 +42,7 @@ const getMyReviews=async(req:Request,res:Response)=>{
       data: result,
     });
   } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch reviews",
-      error: error.message,
-    });
+   next(error)
   }
 }
 export const reviewController = {

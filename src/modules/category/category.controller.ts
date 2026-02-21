@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { categoryServices } from "./category.service";
 
-const createdCategory = async (req: Request, res: Response) => {
+const createdCategory = async (req: Request, res: Response,next:NextFunction) => {
   try {
     const userId=req.user?.id
     if (req.user?.role !== "ADMIN") {
@@ -18,17 +18,12 @@ const createdCategory = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: "Category creation failed!",
-      error: error.message,
-      details: error,
-    });
+    next(error)
   }
 };
 
 
-const getAllCategory=async(req:Request,res:Response)=>{
+const getAllCategory=async(req:Request,res:Response,next:NextFunction)=>{
   try {
     const result=await categoryServices.getAllCategory()
     res.status(200).json({
@@ -37,12 +32,7 @@ const getAllCategory=async(req:Request,res:Response)=>{
       data: result,
     });
   } catch (error:any) {
-     res.status(404).json({
-      success: false,
-      message: "Category retrieved failed!",
-      error: error.message,
-      details: error,
-    });
+    next(error)
   }
 }
 export const categoryController = {
