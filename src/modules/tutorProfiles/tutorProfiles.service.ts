@@ -1,3 +1,4 @@
+import { gte } from "better-auth";
 import { TutorProfiles } from "../../../generated/prisma/client";
 import { TutorProfilesWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
@@ -23,16 +24,17 @@ const createdTutorProfile = async (
       subject: data.subject,
       rating: data.rating,
       authorId: userId,
-      hourlyPrice:data.hourlyPrice
+      hourlyPrice: data.hourlyPrice,
     },
   });
 };
 
 const getAllTutors = async ({
   search,
+  categories
 }: {
   search?: string | undefined;
-  categories: string[] | [];
+  categories?: string[];
 }) => {
   const andCondition: TutorProfilesWhereInput[] = [];
   if (search) {
@@ -55,22 +57,37 @@ const getAllTutors = async ({
               },
             ]),
         //price search
+        ...(isNaN(numericSearch)
+          ? []
+          : [
+              {
+                hourlyPrice: numericSearch,
+              },
+            ]),
       ],
     });
   }
 
   //categories filtering
-
-  const result = await prisma.tutorProfiles.findMany({
-    where: {
-      AND: andCondition,
-    },
-    include: {
+  if (categories && categories.length > 0) {
+    andCondition.push({
       categories: {
-        select: {
-          name: true,
+        some: {
+          id: {
+            in: categories,
+          },
         },
       },
+    });
+  }
+
+
+
+  const result = await prisma.tutorProfiles.findMany({
+    where: andCondition.length > 0 ? { AND: andCondition } : {},
+
+    include: {
+      categories: true,
     },
     orderBy: {
       rating: "desc",
@@ -82,7 +99,7 @@ const getAllTutors = async ({
 
 type UpdateTutorPayload = {
   bio?: string;
-  hourlyPrice?:number;
+  hourlyPrice?: number;
   subject?: string[];
 };
 const updateTutorProfile = async (

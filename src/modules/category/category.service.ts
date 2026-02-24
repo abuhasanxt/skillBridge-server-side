@@ -12,7 +12,7 @@ const createdCategory = async (payload: any, userId: string) => {
   const result = await prisma.category.create({
     data: {
       ...payload,
-      tutorProfileId : tutorProfiles.id,
+      tutorProfileId: tutorProfiles.id,
     },
   });
   return result;
@@ -20,6 +20,9 @@ const createdCategory = async (payload: any, userId: string) => {
 
 const getAllCategory = async () => {
   const result = await prisma.category.findMany({
+    include: {
+      tutors: true,
+    },
     orderBy: {
       name: "asc",
     },
