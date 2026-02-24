@@ -14,17 +14,17 @@ datasource db {
 }
 
 model TutorProfiles {
-  id      String   @id @default(uuid())
-  bio     String?
-  subject String[]
-  price   Float
-  rating  Float    @default(0)
+  id          String   @id @default(uuid())
+  bio         String?
+  subject     String[]
+  hourlyPrice Float
+  rating      Float    @default(0)
 
   authorId String @unique //betterAuth
   user     User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   availability TutorAvailability[]
-  categories   TutorCategory[]
+  categories   Category[]
   bookings     Bookings[]
   reviews      Reviews[]
 
@@ -33,25 +33,16 @@ model TutorProfiles {
 }
 
 model Category {
-  id          String        @id @default(uuid())
-  name        String        @unique
-  description String
-    tutors      TutorCategory[]
-     authorId String
-    user     User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  
+  id             String        @id @default(uuid())
+  name           String        @unique
+  price          Float
+  description    String
+  tutorProfileId String
+  tutors         TutorProfiles @relation(fields: [tutorProfileId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 }
 
-model TutorCategory {
-  id         String        @id @default(uuid())
-  tutorId    String
-  categoryId String
-
-  tutor      TutorProfiles @relation(fields: [tutorId], references: [id], onDelete: Cascade)
-  category   Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-
-  @@unique([tutorId, categoryId])
-}
 model TutorAvailability {
   id String @id @default(uuid())
 
@@ -75,8 +66,6 @@ enum Day {
   FRI
 }
 
-
-
 model Bookings {
   id        String        @id @default(uuid())
   studentId String
@@ -84,7 +73,9 @@ model Bookings {
   tutorId   String        @unique
   tutor     TutorProfiles @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   date      DateTime
-  time      String
+  startTime String
+  endTime   String
+  review    Reviews?
   status    BookingStatus @default(CONFIRMED)
   createdAt DateTime      @default(now())
 }
@@ -101,6 +92,8 @@ model Reviews {
   user      User          @relation(fields: [studentId], references: [id], onDelete: Cascade)
   tutorId   String
   tutor     TutorProfiles @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  booking   Bookings      @relation(fields: [bookingId], references: [id])
+  bookingId String        @unique
   rating    Float
   comment   String        @db.Text
   createdAt DateTime      @default(now())
@@ -109,25 +102,24 @@ model Reviews {
 }
 
 model User {
-  id            String          @id
+  id            String         @id
   name          String
   email         String
-  emailVerified Boolean         @default(false)
+  emailVerified Boolean        @default(false)
   image         String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   sessions      Session[]
   accounts      Account[]
-  tutorProfile  TutorProfiles[]
-  categories Category[]
+  tutorProfile  TutorProfiles?
+  // categories Category[]
   reviews       Reviews[]
   bookings      Bookings[]
-  isBanned  Boolean  @default(false)
-  role          String          @default("STUDENT")
+  isBanned      Boolean        @default(false)
+  role          String         @default("STUDENT")
   phone         String?
 
   @@unique([email])
- 
 }
 
 model Session {

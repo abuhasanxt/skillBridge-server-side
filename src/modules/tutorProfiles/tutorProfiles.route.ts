@@ -10,16 +10,6 @@ router.post(
   auth(UserRole.TUTOR),
   tutorProfileController.createdTutorProfile,
 );
-router.post(
-  "/tutor/categories",
-  auth(UserRole.TUTOR),
-  tutorProfileController.assignCategory,
-);
 router.put("/tutor/profile", auth(), tutorProfileController.updateTutorProfile);
 
-router.delete(
-  "/tutor/categories",
-  auth(UserRole.TUTOR),
-  tutorProfileController.removeCategoriesTutor,
-);
 export const tutorProfileRouter = router;

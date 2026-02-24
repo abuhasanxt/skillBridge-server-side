@@ -16,15 +16,16 @@ const createdBooking = async (data: Payload, studentId: string) => {
     throw new Error(" You are already booked ");
   }
   
-  const result = await prisma.bookings.create({
-    data: {
-      studentId: studentId,
-      tutorId: data.tutorId,
-      date: data.date,
-      time: data.time,
-    },
-  });
-  return result;
+  // const result = await prisma.bookings.create({
+  //   data: {
+  //     studentId: studentId,
+  //     tutorId: data.tutorId,
+  //     date: data.date,
+  //     startTime:data.time,
+  //     endTime:data.
+  //   },
+  // });
+  // return result;
 };
 
 const getMyBookings = async (studentId: string) => {
@@ -41,7 +42,7 @@ const getMyBookings = async (studentId: string) => {
           id: true,
           bio: true,
           subject: true,
-          price: true,
+          
         },
       },
     },

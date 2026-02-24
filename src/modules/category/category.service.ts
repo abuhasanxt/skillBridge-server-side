@@ -1,22 +1,18 @@
 import { prisma } from "../../lib/prisma";
-type Payload = {
-  name: string;
-  description: string;
-};
-const createdCategory = async (data: Payload,authorId:string) => {
-  const existing = await prisma.category.findUnique({
-    where: { name: data.name },
+
+const createdCategory = async (payload: any, userId: string) => {
+  const tutorProfiles = await prisma.tutorProfiles.findUnique({
+    where: { authorId: userId },
   });
 
-  if (existing) {
-    throw new Error("Category already exists");
+  if (!tutorProfiles) {
+    throw new Error("Tutor Profile not found!");
   }
 
   const result = await prisma.category.create({
     data: {
-      authorId,
-      name: data.name,
-      description: data.description,
+      ...payload,
+      tutorProfileId : tutorProfiles.id,
     },
   });
   return result;

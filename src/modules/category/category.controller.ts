@@ -3,15 +3,9 @@ import { categoryServices } from "./category.service";
 
 const createdCategory = async (req: Request, res: Response,next:NextFunction) => {
   try {
-    const userId=req.user?.id
-    if (req.user?.role !== "ADMIN") {
-      return res.status(403).json({
-        success: false,
-        message: "Forbidden! Only admin can create category",
-      });
-    }
-
-    const result = await categoryServices.createdCategory(req.body,userId as string);
+    const result = await categoryServices.createdCategory(
+      req.body,
+      req.user?.id as string);
     res.status(201).json({
       success: true,
       message: "Category created successfully",
