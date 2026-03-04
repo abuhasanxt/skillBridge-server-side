@@ -24,7 +24,11 @@ const getAllCategory = async () => {
       tutors: true,
       review: {
         select: {
-          studentId: true,
+          user: {
+            select:{
+              name:true
+            }
+          },
           rating: true,
           comment: true,
         },
