@@ -105,7 +105,7 @@ model Reviews {
   comment   String   @db.Text
   createdAt DateTime @default(now())
 
-  @@unique([studentId, tutorId])
+  @@unique([studentId, categoryId])
 }
 
 model User {

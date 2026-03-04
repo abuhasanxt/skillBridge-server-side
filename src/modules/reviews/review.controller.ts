@@ -1,30 +1,43 @@
 import { NextFunction, Request, Response } from "express";
 import { reviewServices } from "./reviews.service";
 
-const createReview = async (req: Request, res: Response,next:NextFunction) => {
+const createReview = async (req: Request, res: Response) => {
   try {
-    const studentId = req.user?.id as string; 
-    if (!studentId) throw new Error("Unauthorized: studentId missing");
+    const studentId = req.user?.id;
+    if (!studentId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
 
-    const { tutorId, rating, comment } = req.body;
+    const { categoryId, rating, comment } = req.body;
 
-    if (!tutorId || rating === undefined || !comment) {
-      throw new Error("Missing required fields: tutorId, rating, comment");
+    if (!categoryId || rating === undefined || !comment) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields: categoryId, rating, comment",
+      });
     }
 
     const review = await reviewServices.createReview(studentId, {
-      tutorId,
+      categoryId,
       rating: Number(rating),
       comment,
+     
     });
 
     res.status(201).json({
       success: true,
-      message: "Review submitted successfully!",
+      message: "Category review submitted successfully!",
       data: review,
     });
   } catch (error: any) {
-    next(error)
+    res.status(400).json({
+      success: false,
+      message: error.message,
+      details: error,
+    });
   }
 };
 

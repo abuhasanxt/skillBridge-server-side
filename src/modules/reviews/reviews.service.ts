@@ -1,48 +1,53 @@
 import { prisma } from "../../lib/prisma";
 
-type CreateReviewInput = {
-  tutorId: string;
-  rating: number;
-  comment: string;
-};
-
-const createReview = async (studentId: string, data: CreateReviewInput) => {
-  const tutorExists = await prisma.tutorProfiles.findUnique({
-    where: { id: data.tutorId },
+const createReview = async (
+  studentId: string,
+  payload: { categoryId: string; rating: number; comment: string },
+) => {
+  //  Check if category exists
+  const category = await prisma.category.findUnique({
+    where: { id: payload.categoryId },
   });
+  if (!category) throw new Error("Category not found");
 
-  if (!tutorExists) throw new Error("Tutor not found");
+  // Check tutor exists
+  if (!category.tutorProfileId)
+    throw new Error("Category does not have an assigned tutor");
+  const tutor = await prisma.tutorProfiles.findUnique({
+    where: { id: category.tutorProfileId },
+  });
+  if (!tutor) throw new Error("Tutor for this category not found");
 
+  //  Prevent duplicate review for same category
   const alreadyReviewed = await prisma.reviews.findUnique({
     where: {
-      studentId_tutorId: {
-        studentId,
-        tutorId: data.tutorId,
-      },
+      studentId_categoryId: { studentId, categoryId: payload.categoryId },
     },
   });
+  if (alreadyReviewed) throw new Error("You already reviewed this category");
 
-  if (alreadyReviewed) throw new Error("You already reviewed this tutor");
-
+  //  Create review
   const review = await prisma.reviews.create({
     data: {
       studentId,
-      tutorId: data.tutorId,
-      rating: data.rating,
-      comment: data.comment,
+      categoryId: payload.categoryId,
+      tutorId: tutor.id, // link review to tutor
+      rating: payload.rating,
+      comment: payload.comment,
     },
   });
 
-  const reviews = await prisma.reviews.findMany({
-    where: { tutorId: data.tutorId },
+  //  Update tutor's average rating
+  const tutorReviews = await prisma.reviews.findMany({
+    where: { tutorId: tutor.id },
     select: { rating: true },
   });
 
   const avgRating =
-    reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+    tutorReviews.reduce((sum, r) => sum + r.rating, 0) / tutorReviews.length;
 
   await prisma.tutorProfiles.update({
-    where: { id: data.tutorId },
+    where: { id: tutor.id },
     data: { rating: avgRating },
   });
 
@@ -58,14 +63,12 @@ const getMyReviews = async (userId: string) => {
   const reviews = await prisma.reviews.findMany({
     where: { tutorId: tutorProfile.id },
     include: {
-      user: { select: {  name: true, email: true } },
+      user: { select: { name: true, email: true } },
     },
     orderBy: { createdAt: "desc" },
   });
 
- 
-
-  return reviews 
+  return reviews;
 };
 
 export const reviewServices = {
