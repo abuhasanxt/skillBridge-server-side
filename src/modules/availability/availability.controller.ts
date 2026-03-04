@@ -4,7 +4,6 @@ import { availabilityServices } from "./availability.service";
 const createdAvailability = async (
   req: Request,
   res: Response,
-  next: NextFunction,
 ) => {
   try {
     const userId = req.user?.id;
@@ -18,7 +17,13 @@ const createdAvailability = async (
       data: result,
     });
   } catch (error: any) {
-    next(error);
+    res.status(500).json({
+      success: false,
+      message: "created availability failed!",
+      error:error.message,
+      details:error
+
+    });
   }
 };
 
