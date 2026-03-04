@@ -24,7 +24,6 @@ const createReview = async (req: Request, res: Response) => {
       categoryId,
       rating: Number(rating),
       comment,
-     
     });
 
     res.status(201).json({
@@ -41,13 +40,13 @@ const createReview = async (req: Request, res: Response) => {
   }
 };
 
-const getMyReviews=async(req:Request,res:Response,next:NextFunction)=>{
+const getReviews = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.id;
     if (!userId)
       return res.status(401).json({ success: false, message: "Unauthorized" });
 
-    const result = await reviewServices.getMyReviews(userId)
+    const result = await reviewServices.getReviews(userId);
 
     res.status(200).json({
       success: true,
@@ -55,10 +54,10 @@ const getMyReviews=async(req:Request,res:Response,next:NextFunction)=>{
       data: result,
     });
   } catch (error: any) {
-   next(error)
+    next(error);
   }
-}
+};
 export const reviewController = {
   createReview,
-  getMyReviews
+  getReviews,
 };

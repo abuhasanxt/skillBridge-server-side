@@ -22,6 +22,13 @@ const getAllCategory = async () => {
   const result = await prisma.category.findMany({
     include: {
       tutors: true,
+      review: {
+        select: {
+          studentId: true,
+          rating: true,
+          comment: true,
+        },
+      },
     },
     orderBy: {
       name: "asc",

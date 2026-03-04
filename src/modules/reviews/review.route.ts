@@ -5,6 +5,6 @@ import auth, { UserRole } from "../../middleware/auth";
 const router = express.Router();
 
 router.post("/reviews",auth(UserRole.STUDENT), reviewController.createReview);
-router.get("/reviews",auth(UserRole.STUDENT),reviewController.getMyReviews)
+router.get("/reviews",auth(UserRole.STUDENT),reviewController.getReviews)
 
 export const reviewRouter = router;
