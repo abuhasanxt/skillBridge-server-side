@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { BookingServices } from "./booking.service";
+import { prisma } from "../../lib/prisma";
 
 const createdBooking = async (req: Request, res: Response) => {
   try {
@@ -21,7 +22,7 @@ const createdBooking = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
  res.status(500).json({
-      success: true,
+      success: false,
       message: "Booking failed !",
       error:error.message,
       details:error
@@ -64,8 +65,49 @@ const getAllBookings=async (req:Request,res:Response,next:NextFunction)=>{
     next(error)
   }
 }
+const bookingStatusUpdate=async (req:Request,res:Response)=>{
+ try {
+    const { bookingId } = req.params;
+    const { status } = req.body;
+
+   if (!req.user?.id) {
+  throw new Error("Unauthorized");
+}
+    const tutorProfile = await prisma.tutorProfiles.findUnique({
+      where: {authorId: req.user?.id },
+    });
+
+    if (!tutorProfile) {
+      throw new Error("Tutor profile not found");
+    }
+
+    const result = await BookingServices.bookingStatusUpdate(
+      bookingId as string,
+      tutorProfile.id,
+      status
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Status updated successfully!",
+      data: result,
+    });
+
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}
+
+
+
+
+
 export const bookingController = {
   createdBooking,
   getMyBookings,
-  getAllBookings
+  getAllBookings,
+  bookingStatusUpdate
 };

@@ -1,4 +1,4 @@
-import { Bookings } from "../../../generated/prisma/client";
+import { Bookings, BookingStatus } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
 const createdBooking = async (
@@ -78,8 +78,28 @@ const getAllBookings = async () => {
   return await prisma.bookings.findMany();
 };
 
+const bookingStatusUpdate = async (
+  bookingId: string,
+  tutorProfileId: string,
+  status: BookingStatus,
+) => {
+  console.log(tutorProfileId);
+  const result = await prisma.bookings.updateMany({
+    where: {
+      id: bookingId,
+      tutorId: tutorProfileId,
+    },
+    data: { status },
+  });
+if (result.count === 0) {
+  throw new Error("Booking not found or unauthorized");
+}
+  return result;
+};
+
 export const BookingServices = {
   createdBooking,
   getMyBookings,
   getAllBookings,
+  bookingStatusUpdate,
 };

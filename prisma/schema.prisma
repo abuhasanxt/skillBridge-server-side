@@ -39,6 +39,7 @@ model Category {
   description    String
   tutorProfileId String
   booking        Bookings[]
+  review Reviews[]
   tutors         TutorProfiles @relation(fields: [tutorProfileId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
@@ -71,7 +72,7 @@ model Bookings {
   id         String        @id @default(uuid())
   studentId  String
   student    User          @relation(fields: [studentId], references: [id])
-  tutorId    String        @unique
+  tutorId    String        
   tutor      TutorProfiles @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   categoryId String
   category   Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
@@ -97,6 +98,8 @@ model Reviews {
   user      User          @relation(fields: [studentId], references: [id], onDelete: Cascade)
   tutorId   String
   tutor     TutorProfiles @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   rating    Float
   comment   String   @db.Text
