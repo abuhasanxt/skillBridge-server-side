@@ -38,6 +38,7 @@ model Category {
   price          Float
   description    String
   tutorProfileId String
+  booking        Bookings[]
   tutors         TutorProfiles @relation(fields: [tutorProfileId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
@@ -67,17 +68,21 @@ enum Day {
 }
 
 model Bookings {
-  id        String        @id @default(uuid())
-  studentId String
-  student   User          @relation(fields: [studentId], references: [id])
-  tutorId   String        @unique
-  tutor     TutorProfiles @relation(fields: [tutorId], references: [id], onDelete: Cascade)
-  date      DateTime
-  startTime String
-  endTime   String
-  review    Reviews?
+  id         String        @id @default(uuid())
+  studentId  String
+  student    User          @relation(fields: [studentId], references: [id])
+  tutorId    String        @unique
+  tutor      TutorProfiles @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  startDate  DateTime
+  endDate    DateTime
+  totalPrice Float
+  notes      String?
+
   status    BookingStatus @default(CONFIRMED)
   createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 }
 
 enum BookingStatus {
@@ -92,11 +97,10 @@ model Reviews {
   user      User          @relation(fields: [studentId], references: [id], onDelete: Cascade)
   tutorId   String
   tutor     TutorProfiles @relation(fields: [tutorId], references: [id], onDelete: Cascade)
-  booking   Bookings      @relation(fields: [bookingId], references: [id])
-  bookingId String        @unique
+
   rating    Float
-  comment   String        @db.Text
-  createdAt DateTime      @default(now())
+  comment   String   @db.Text
+  createdAt DateTime @default(now())
 
   @@unique([studentId, tutorId])
 }

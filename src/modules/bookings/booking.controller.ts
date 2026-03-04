@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { BookingServices } from "./booking.service";
 
-const createdBooking = async (req: Request, res: Response,next:NextFunction) => {
+const createdBooking = async (req: Request, res: Response) => {
   try {
     const user = req.user;
     if (!user) {
@@ -20,9 +20,15 @@ const createdBooking = async (req: Request, res: Response,next:NextFunction) => 
       data: result,
     });
   } catch (error: any) {
-    next(error)
+ res.status(500).json({
+      success: true,
+      message: "Booking failed !",
+      error:error.message,
+      details:error
+     
+    });
   }
-};
+}
 
 const getMyBookings = async (req: Request, res: Response,next:NextFunction) => {
   try {

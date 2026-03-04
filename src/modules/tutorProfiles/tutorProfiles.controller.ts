@@ -1,10 +1,10 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { tutorProfileServices } from "./tutorProfiles.service";
 
 const createdTutorProfile = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+
 ) => {
   try {
     const userId = req.user?.id;
@@ -24,7 +24,11 @@ const createdTutorProfile = async (
       data: result,
     });
   } catch (error: any) {
-    next(error);
+    res.status(500).json({
+      success: true,
+      message: "Tutor profile created failed",
+      details:error.message
+    });
   }
 };
 
