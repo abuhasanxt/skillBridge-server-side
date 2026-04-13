@@ -25,7 +25,7 @@ const createdTutorProfile = async (
     });
   } catch (error: any) {
     res.status(500).json({
-      success: true,
+      success: false,
       message: "Tutor profile created failed",
       details:error.message
     });
