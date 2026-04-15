@@ -10,5 +10,7 @@ router.get("/me", auth(), userController.getOwnProfile);
 router.get("/tutors", userController.getAllTutor);
 router.get("/tutors/:id", userController.getTutorDetails);
 router.put("/me", auth(), userController.updateOwnProfile);
+router.put("/isBanned/:id",auth(UserRole.ADMIN),userController.isBanned)
+router.put("/role/:id",auth(UserRole.ADMIN),userController.changeUserRole)
 
 export const userRoutes = router;

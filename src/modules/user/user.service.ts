@@ -54,59 +54,6 @@ const getOwnProfile = async (userId: string) => {
   return result;
 };
 
-//update own profile
-// type UpdateUserPayload = {
-//   name: string;
-//   image: string;
-//   phone: string;
-
-//     bio?: string;
-//   hourlyPrice?: number;
-//   subject?: string[];
-// };
-
-// const updateOwnProfile = async (id: string, payload: UpdateUserPayload) => {
-
-//   const user =await prisma.user.findUnique({
-//     where:{id},
-//     include:{
-//       tutorProfile:true
-//     }
-//   })
-//   if (!user) {
-//     throw new Error("User not found");
-//   }
-//   const userData: UpdateUserPayload = {
-//     name: payload.name,
-//     image: payload.image,
-//     phone: payload.phone,
-//   };
-
-//   if (user.tutorProfile) {
-//     return prisma.user.update({
-//       where:{id},
-//       data:{
-//         ...userData,
-//         tutorProfile:{
-//           update:{
-//             bio:payload.bio?? undefined,
-//             hourlyPrice:payload.hourlyPrice??undefined,
-//             subject:payload.subject?? undefined
-//           }
-//         }
-//       },
-//       include:{
-//         tutorProfile:true
-//       }
-//     })
-//   }
-
-//   return prisma.user.update({
-//     where: { id },
-//     data: userData,
-//   });
-// };
-
 // update own profile
 type UpdateUserPayload = {
   name?: string;
@@ -162,6 +109,41 @@ const updateOwnProfile = async (id: string, payload: UpdateUserPayload) => {
     data: userData,
   });
 };
+
+const userIsBanned = async (id: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id: id },
+    select: { isBanned: true },
+  });
+  if (!user) {
+    throw new Error("User not found");
+  }
+  const result = await prisma.user.update({
+    where: { id },
+    data: {
+      isBanned: !user.isBanned,
+    },
+  });
+
+  return result;
+};
+
+const changeUserRole = async (
+  id: string,
+  role: UserRole.ADMIN | UserRole.TUTOR | UserRole.STUDENT,
+) => {
+  await prisma.user.findUnique({
+    where: { id: id },
+    select: { role: true },
+  });
+  const result = await prisma.user.update({
+    where: { id },
+    data: {
+      role,
+    },
+  });
+  return result;
+};
 export const userServices = {
   getAllUser,
   getAllStudent,
@@ -169,4 +151,6 @@ export const userServices = {
   getTutorDetails,
   updateOwnProfile,
   getOwnProfile,
+  userIsBanned,
+  changeUserRole
 };
