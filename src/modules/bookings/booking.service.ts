@@ -5,9 +5,11 @@ const createdBooking = async (
   payload: Omit<Bookings, "id" | "createdAt" | "updatedAt">,
   studentId: string,
 ) => {
-  const exists = await prisma.bookings.findUnique({
+  const exists = await prisma.bookings.findFirst({
     where: {
-      id: studentId,
+      categoryId: payload.categoryId,
+      tutorId: payload.tutorId,
+      studentId: studentId,
     },
   });
   if (exists) {
@@ -47,6 +49,7 @@ const createdBooking = async (
     data: {
       ...payload,
       totalPrice,
+      studentId
     },
   });
   return result;

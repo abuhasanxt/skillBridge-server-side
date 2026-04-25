@@ -12,6 +12,7 @@ const createdCategory = async (req: Request, res: Response,next:NextFunction) =>
       data: result,
     });
   } catch (error: any) {
+    console.error(error)
     next(error)
   }
 };
