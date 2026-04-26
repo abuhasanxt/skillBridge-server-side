@@ -52,6 +52,33 @@ const getMyBookings = async (req: Request, res: Response,next:NextFunction) => {
   }
 };
 
+
+const getTutorBookings = async (req: Request, res: Response,next:NextFunction) => {
+  try {
+    const user = req.user;
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Unauthorized!",
+      });
+    }
+    const result = await BookingServices.getTutorBookings(user.id);
+    res.status(201).json({
+      success: true,
+      message: "Get my booking retrieved successfully !",
+      data: result,
+    });
+  } catch (error: any) {
+    next(error)
+  }
+};
+
+
+
+
+
+
 const getAllBookings=async (req:Request,res:Response,next:NextFunction)=>{
  try {
     const result = await BookingServices.getAllBookings();
@@ -109,5 +136,6 @@ export const bookingController = {
   createdBooking,
   getMyBookings,
   getAllBookings,
+  getTutorBookings,
   bookingStatusUpdate
 };

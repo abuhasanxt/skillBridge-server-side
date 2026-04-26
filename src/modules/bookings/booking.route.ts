@@ -14,6 +14,11 @@ router.get(
   bookingController.getMyBookings,
 );
 router.get(
+  "/tutor-bookings",
+  auth(UserRole.TUTOR),
+  bookingController.getTutorBookings,
+);
+router.get(
   "/allBookings",
   auth(UserRole.ADMIN),
   bookingController.getAllBookings,

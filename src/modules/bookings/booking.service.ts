@@ -1,5 +1,6 @@
 import { Bookings, BookingStatus } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
+import { UserRole } from "../../middleware/auth";
 
 const createdBooking = async (
   payload: Omit<Bookings, "id" | "createdAt" | "updatedAt">,
@@ -49,7 +50,7 @@ const createdBooking = async (
     data: {
       ...payload,
       totalPrice,
-      studentId
+      studentId,
     },
   });
   return result;
@@ -69,8 +70,56 @@ const getMyBookings = async (studentId: string) => {
           id: true,
           bio: true,
           subject: true,
+          user: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
         },
       },
+    },
+  });
+
+  return result;
+};
+
+const getTutorBookings = async (userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: {
+      tutorProfile: true,
+    },
+  });
+
+  let whereCondition = {};
+
+  if (user?.role === UserRole.TUTOR) {
+    whereCondition = {
+      tutorId: user?.tutorProfile?.id,
+    };
+  }
+
+  const result = await prisma.bookings.findMany({
+    where: whereCondition,
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      tutor: {
+        select: {
+          id: true,
+          bio: true,
+          subject: true,
+        },
+      },
+      student:{
+        select:{
+          name:true,
+          email:true,
+          phone:true
+        }
+      }
     },
   });
 
@@ -94,9 +143,9 @@ const bookingStatusUpdate = async (
     },
     data: { status },
   });
-if (result.count === 0) {
-  throw new Error("Booking not found or unauthorized");
-}
+  if (result.count === 0) {
+    throw new Error("Booking not found or unauthorized");
+  }
   return result;
 };
 
@@ -105,4 +154,5 @@ export const BookingServices = {
   getMyBookings,
   getAllBookings,
   bookingStatusUpdate,
+  getTutorBookings,
 };
