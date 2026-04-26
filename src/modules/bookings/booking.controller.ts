@@ -21,17 +21,20 @@ const createdBooking = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
- res.status(500).json({
+    res.status(500).json({
       success: false,
       message: "Booking failed !",
-      error:error.message,
-      details:error
-     
+      error: error.message,
+      details: error,
     });
   }
-}
+};
 
-const getMyBookings = async (req: Request, res: Response,next:NextFunction) => {
+const getMyBookings = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const user = req.user;
 
@@ -48,12 +51,15 @@ const getMyBookings = async (req: Request, res: Response,next:NextFunction) => {
       data: result,
     });
   } catch (error: any) {
-    next(error)
+    next(error);
   }
 };
 
-
-const getTutorBookings = async (req: Request, res: Response,next:NextFunction) => {
+const getTutorBookings = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const user = req.user;
 
@@ -70,17 +76,16 @@ const getTutorBookings = async (req: Request, res: Response,next:NextFunction) =
       data: result,
     });
   } catch (error: any) {
-    next(error)
+    next(error);
   }
 };
 
-
-
-
-
-
-const getAllBookings=async (req:Request,res:Response,next:NextFunction)=>{
- try {
+const getAllBookings = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
     const result = await BookingServices.getAllBookings();
     res.status(201).json({
       success: true,
@@ -88,20 +93,19 @@ const getAllBookings=async (req:Request,res:Response,next:NextFunction)=>{
       data: result,
     });
   } catch (error: any) {
-   
-    next(error)
+    next(error);
   }
-}
-const bookingStatusUpdate=async (req:Request,res:Response)=>{
- try {
+};
+const bookingStatusUpdate = async (req: Request, res: Response) => {
+  try {
     const { bookingId } = req.params;
     const { status } = req.body;
 
-   if (!req.user?.id) {
-  throw new Error("Unauthorized");
-}
+    if (!req.user?.id) {
+      throw new Error("Unauthorized");
+    }
     const tutorProfile = await prisma.tutorProfiles.findUnique({
-      where: {authorId: req.user?.id },
+      where: { authorId: req.user?.id },
     });
 
     if (!tutorProfile) {
@@ -111,7 +115,7 @@ const bookingStatusUpdate=async (req:Request,res:Response)=>{
     const result = await BookingServices.bookingStatusUpdate(
       bookingId as string,
       tutorProfile.id,
-      status
+      status,
     );
 
     res.status(200).json({
@@ -119,23 +123,18 @@ const bookingStatusUpdate=async (req:Request,res:Response)=>{
       message: "Status updated successfully!",
       data: result,
     });
-
   } catch (error: any) {
     res.status(400).json({
       success: false,
       message: error.message,
     });
   }
-}
-
-
-
-
+};
 
 export const bookingController = {
   createdBooking,
   getMyBookings,
   getAllBookings,
   getTutorBookings,
-  bookingStatusUpdate
+  bookingStatusUpdate,
 };

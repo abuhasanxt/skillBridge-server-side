@@ -113,13 +113,13 @@ const getTutorBookings = async (userId: string) => {
           subject: true,
         },
       },
-      student:{
-        select:{
-          name:true,
-          email:true,
-          phone:true
-        }
-      }
+      student: {
+        select: {
+          name: true,
+          email: true,
+          phone: true,
+        },
+      },
     },
   });
 
