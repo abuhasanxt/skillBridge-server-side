@@ -42,11 +42,13 @@ const createReview = async (req: Request, res: Response) => {
 
 const getReviews = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = req.user?.id;
-    if (!userId)
-      return res.status(401).json({ success: false, message: "Unauthorized" });
+    const { categoryId } = req.query;
+    if (!categoryId)
+      return res
+        .status(401)
+        .json({ success: false, message: "Category not found" });
 
-    const result = await reviewServices.getReviews(userId);
+    const result = await reviewServices.getReviews(categoryId as string);
 
     res.status(200).json({
       success: true,
