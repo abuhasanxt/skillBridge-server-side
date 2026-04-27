@@ -6,14 +6,15 @@ type Payload = {
   endTime: Date;
 };
 const createdAvailability = async (data: Payload, userId: string) => {
-  if (data.startTime >= data.endTime) {
+  const start = new Date(data.startTime);
+  const end = new Date(data.endTime);
+
+  if (start >= end) {
     throw new Error("Start time must be before end time");
   }
 
   const tutorProfile = await prisma.tutorProfiles.findUnique({
-    where: {
-      authorId: userId,
-    },
+    where: { authorId: userId },
   });
 
   if (!tutorProfile) {
@@ -24,14 +25,7 @@ const createdAvailability = async (data: Payload, userId: string) => {
     where: {
       tutorProfileId: tutorProfile.id,
       day: data.day,
-      AND: [
-        {
-          startTime: { lt: data.endTime },
-        },
-        {
-          endTime: { gt: data.startTime },
-        },
-      ],
+      AND: [{ startTime: { lt: end } }, { endTime: { gt: start } }],
     },
   });
 
@@ -43,8 +37,8 @@ const createdAvailability = async (data: Payload, userId: string) => {
     data: {
       tutorProfileId: tutorProfile.id,
       day: data.day,
-      startTime: data.startTime,
-      endTime: data.endTime,
+      startTime: start,
+      endTime: end,
     },
   });
 

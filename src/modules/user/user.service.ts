@@ -36,6 +36,7 @@ const getTutorDetails = async (id: string) => {
         include: {
           reviews: true,
           categories: true,
+          availability:true
         },
       },
     },
@@ -50,6 +51,7 @@ const getOwnProfile = async (userId: string) => {
     include: {
       tutorProfile: true,
     },
+    
   });
   return result;
 };
