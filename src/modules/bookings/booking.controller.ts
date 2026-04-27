@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { BookingServices } from "./booking.service";
 import { prisma } from "../../lib/prisma";
+import { UserRole } from "../../middleware/auth";
 
 const createdBooking = async (req: Request, res: Response) => {
   try {
@@ -131,10 +132,55 @@ const bookingStatusUpdate = async (req: Request, res: Response) => {
   }
 };
 
+
+
+
+
+
+
+
+const bookingsStatusUpdate = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { bookingId } = req.params;
+    const { status } = req.body;
+
+    const user = req.user;
+
+    
+    if (!user || user.role !== UserRole.ADMIN) {
+      return res.status(403).json({
+        success: false,
+        message: "Only admin can update booking status",
+      });
+    }
+
+    const result = await BookingServices.bookingsStatusUpdate(
+      bookingId as string,
+      status
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Booking status updated successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      message: error.message || "Something went wrong",
+    });
+  }
+};
+
+
 export const bookingController = {
   createdBooking,
   getMyBookings,
   getAllBookings,
   getTutorBookings,
   bookingStatusUpdate,
+  bookingsStatusUpdate
 };

@@ -29,4 +29,6 @@ router.put(
   auth(UserRole.TUTOR),
   bookingController.bookingStatusUpdate,
 );
+
+router.put("/booking/:bookingId", auth(UserRole.ADMIN), bookingController.bookingsStatusUpdate);
 export const bookingRouter = router;

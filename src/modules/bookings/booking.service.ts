@@ -127,7 +127,17 @@ const getTutorBookings = async (userId: string) => {
 };
 
 const getAllBookings = async () => {
-  return await prisma.bookings.findMany();
+  return await prisma.bookings.findMany({
+    include: {
+      student: {
+        select: {
+          name: true,
+          email: true,
+          phone: true,
+        },
+      },
+    },
+  });
 };
 
 const bookingStatusUpdate = async (
@@ -149,10 +159,30 @@ const bookingStatusUpdate = async (
   return result;
 };
 
+
+
+
+
+
+
+const bookingsStatusUpdate = async (
+  bookingId: string,
+  status: BookingStatus,
+) => {
+  const updated = await prisma.bookings.update({
+    where: { id: bookingId },
+    data: { status },
+  });
+
+  return updated;
+};
+
+
 export const BookingServices = {
   createdBooking,
   getMyBookings,
   getAllBookings,
   bookingStatusUpdate,
   getTutorBookings,
+  bookingsStatusUpdate
 };
